@@ -3003,12 +3003,6 @@ function do_dominance_check(reason) {
 			assign_vp([3, 1], score, score.slice())
 	}
 
-	// Clear the board.
-	if (success) {
-		for (let i = 0; i < 36; ++i)
-			game.pieces[i] = 0
-	}
-
 	// Check instant victory
 	let vps = game.players.map(pp => pp.vp).sort((a,b)=>b-a)
 	if (vps[0] >= vps[1] + 4)
@@ -3016,6 +3010,12 @@ function do_dominance_check(reason) {
 
 	if (final)
 		return goto_pause_game_over()
+
+	// Clear the board.
+	if (success) {
+		for (let i = 0; i < 36; ++i)
+			game.pieces[i] = 0
+	}
 
 	game.events = {}
 	for (let p = 0; p < game.players.length; ++p)
@@ -3221,26 +3221,6 @@ exports.action = function (state, current, action, arg) {
 		else
 			throw new Error("Invalid action: " + action)
 	}
-	return save_game()
-}
-
-exports.resign = function (state, current) {
-	load_game(state)
-	logbr()
-	log(`${current} resigned.`)
-	game.state = 'game_over'
-	game.active = 5
-	game.victory = `${current} resigned.`
-
-	if (game.players.length === 2) {
-		if (current === player_names[0])
-			game.result = player_names[1]
-		else
-			game.result = player_names[0]
-	} else {
-		game.result = "None"
-	}
-
 	return save_game()
 }
 
